@@ -138,7 +138,36 @@ def buying():
 
 # Fonction du transfert d'argent
 def transfer():
-    print("Transfert d'argent")
+    print("*************Transfert d'argent*************")
+
+    while True:
+        choix = input(
+            """
+            1. Envoyer en local
+            2. Envoyer international
+              --- 
+            0. prec
+            9. Accueil
+            8. Quitter
+            choix: """
+        )
+
+        match choix:
+            case "1":
+                send_money_local()
+
+            case "2":
+                print("Pass")
+
+            case "0" | "9":
+                orange_money_menu()
+                break
+            case "8":
+                print("Au revoir")
+                break
+
+            case _:
+                print("Choix incorrect !")
 
 
 # Fonction pour afficher le solde
@@ -176,20 +205,55 @@ def credit():
                 print("Le montant ne peut pas être supérieur au solde")
                 continue
             else:
-                new_solde = my_solde - montant
-                i["balance"] = new_solde
-                i["credit"] = montant
-                print(i)
-
-                print(
-                    f"L'achat du crédit a été effectuer avec succes. Votre solde est de {new_solde} FCFA."
-                )
-
                 break
 
         except ValueError:
             print("Veuillez entrer un nombre entier")
             continue
+
+    new_solde = my_solde - montant
+    i["balance"] = new_solde
+    i["credit"] = montant
+    print(i)
+
+    print(
+        f"L'achat du crédit a été effectuer avec succes. Votre solde est de {new_solde} FCFA."
+    )
+
+
+def send_money_local():
+    print("*********Transfert d'argent en local*********")
+    while True:
+        for i in orange_center:
+            my_solde = i["balance"]
+        try:
+            montant = int(
+                input("Veuillez saisir le montant que vous souhaitez envoyer: ")
+            )
+            numero = input("Veuillez saisir le numéro du déstinataire: ")
+
+            if montant < 0:
+                print("Le montant ne doit pas être négatif")
+                continue
+            elif montant > my_solde:
+                print("Le montant ne doit être pas superieur")
+                continue
+            elif len(numero) != 9:
+                print("Le numéro doit contenir 9 chiffre")
+            else:
+                break
+
+        except ValueError:
+            print("Veuillez entrer un nombre entier")
+            continue
+
+    new_solde = my_solde - montant
+    i["balance"] = new_solde
+    i["transfert_destinataire"] = montant
+    print(i)
+    print(
+        f"Le transfert vers le numero {numero} a été effectué avec succes. Votre solde est de {new_solde} FCFA."
+    )
 
 
 if __name__ == "__main__":
