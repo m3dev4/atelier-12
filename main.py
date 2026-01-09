@@ -1,7 +1,14 @@
+import os
+
+
+def clear_console():
+    os.system("cls" if os.name == "nt" else "clear")
+
+
 # init du liste pour stocker l'ensemble du prigramme
 orange_center = [{"balance": 100000}]
 
-code_secret = 45254
+code_secret = 1234
 
 
 # Fonction du menu pour demander à l'utlisateur de taper USSD d'orange money
@@ -147,6 +154,7 @@ def transfer():
             """
             1. Envoyer en local
             2. Envoyer international
+            3. Annuler un tranfert
               --- 
             0. prec
             9. Accueil
@@ -160,6 +168,9 @@ def transfer():
 
             case "2":
                 print("Pass")
+
+            case "3":
+                cancel_transfer()
 
             case "0" | "9":
                 orange_money_menu()
@@ -325,6 +336,44 @@ def send_money_local():
         f"Le transfert vers le numero {numero} a été effectué avec succes. Votre solde est de {new_solde} FCFA."
     )
 
+    # Annuler le transfert d'argent
+
+
+def cancel_transfer():
+    for i in orange_center:
+        transfert = i.get("transfert_destinataire")
+        if not transfert or transfert == 0:
+            print("Aucun transfert n'a été éffectuer")
+            return
+
+    message = "Vous êtes sur le point d'annuler un transfert d'argent. \n1. Confirmer \n2. Annuler\nchoix:"
+    while True:
+        try:
+            code_secret = int(input("Veuillez entrer votre code secret: "))
+            if code_secret != code_secret:
+                print("Code incorrect ! Veuillez réessayer.")
+                continue
+            if input(message) == "1":
+                for i in orange_center:
+                    my_solde = i["balance"]
+                    montant_transfert = i.get("transfert_destinataire", 0)
+                    new_solde = my_solde + montant_transfert
+                    i["balance"] = new_solde
+                    i["transfert_destinataire"] = 0
+                    print(i)
+                    print(
+                        f"Le transfert a été annulé avec succes. Votre solde est de {new_solde} FCFA."
+                    )
+                    return
+            elif input(message) == "2":
+                print("Annulation du transfert annulée.")
+                return
+            break
+        except ValueError:
+            print("Veuillez entrer un nombre entier")
+            continue
+
 
 if __name__ == "__main__":
     menuUSSD()
+    clear_console()
