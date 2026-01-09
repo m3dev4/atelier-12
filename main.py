@@ -1,6 +1,8 @@
 # init du liste pour stocker l'ensemble du prigramme
 orange_center = [{"balance": 100000}]
 
+code_secret = 45254
+
 
 # Fonction du menu pour demander à l'utlisateur de taper USSD d'orange money
 def menuUSSD():
@@ -123,7 +125,7 @@ def buying():
                 credit()
 
             case "2":
-                print("Pass")
+                menu_forfait()
 
             case "0" | "9":
                 orange_money_menu()
@@ -190,6 +192,7 @@ def solde():
     return my_solde
 
 
+# fonction pour acheter du credit
 def credit():
 
     while True:
@@ -221,6 +224,73 @@ def credit():
     )
 
 
+def menu_forfait():
+    print("*********Achat de forfait:*********")
+    while True:
+        menu_forfait = """
+        1. Pass 100 Mo - 500fcfa
+        2. Pass 500 Mo - 1000fcfa
+        3. Pass 1 Go - 2000fcfa
+        --
+        0. prec
+        9. Accueil
+        8. Quitter
+    """
+        print(menu_forfait)
+        choix = input("Veuillez choisir un forfait: ")
+        match choix:
+            case "1":
+                acheter_forfait(500)
+            case "2":
+                acheter_forfait(1000)
+            case "3":
+                acheter_forfait(2000)
+            case "9":
+                orange_money_menu()
+            case "0":
+                buying()
+            case "8":
+                print("Au revoir")
+                break
+            case _:
+                print("Choix incorrect !")
+
+
+def acheter_forfait(prix):
+    message = (
+        "Vous êtes sur le point d'acheter un forfait à "
+        + str(prix)
+        + "FCFA. \n1. Confirmer \n2. Annuler\nchoix:"
+    )
+    for i in orange_center:
+        my_solde = i["balance"]
+
+        if prix > my_solde:
+            print("Le montant ne peut pas être supérieur au solde")
+        elif prix < 0:
+            print("Le montant ne peut pas être négatif")
+        else:
+            if input(message) == "1":
+                while True:
+                    try:
+                        input_code = int(input("Veuillez entrer votre code secret: "))
+                        if input_code == code_secret:
+                            new_solde = my_solde - prix
+                            i["balance"] = new_solde
+                            i["forfait"] = prix
+                            print(i)
+                            print(
+                                f"L'achat du forfait a été effectuer avec succes. Votre solde est de {new_solde} FCFA."
+                            )
+                            return
+                        else:
+                            print("Code incorrect ! Veuillez réessayer.")
+                    except ValueError:
+                        print("Veuillez entrer un nombre entier")
+                        continue
+
+
+# fonction pour transferer de l'argent en local
 def send_money_local():
     print("*********Transfert d'argent en local*********")
     while True:
